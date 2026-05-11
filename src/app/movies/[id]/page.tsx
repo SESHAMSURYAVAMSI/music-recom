@@ -2,6 +2,8 @@ import Image from "next/image";
 
 import FavoriteButton from "@/components/movies/FavoriteButton";
 import WatchlistButton from "@/components/movies/WatchlistButton";
+import TrailerButton from "@/components/movies/TrailerButton";
+import MovieCard from "@/components/movies/MovieCard";
 
 import { tmdb, imageBaseUrl } from "@/lib/tmdb";
 
@@ -98,23 +100,20 @@ export default async function MoviePage({
 
           {/* ACTIONS */}
           <div className="mt-8 flex items-center gap-4">
-            <button className="rounded-xl bg-white px-8 py-3 font-semibold text-black transition hover:bg-zinc-200">
-              ▶ Watch Now
-            </button>
-             
-             {/* FavoriteButton */}
+            {/* Trailer */}
+            <TrailerButton
+              movieId={movie.id}
+            />
+
+            {/* Favorite */}
             <FavoriteButton
-  movieId={movie.id}
-  title={movie.title}
-  posterPath={`${imageBaseUrl}${movie.poster_path}`}
-/>
-             
-             {/* watchlistButton */}
+              movieId={movie.id}
+            />
+
+            {/* Watchlist */}
             <WatchlistButton
-  movieId={movie.id}
-  title={movie.title}
-  posterPath={`${imageBaseUrl}${movie.poster_path}`}
-/>
+              movieId={movie.id}
+            />
           </div>
         </div>
       </div>
@@ -131,27 +130,17 @@ export default async function MoviePage({
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-5 md:grid-cols-4 lg:grid-cols-6">
-          {similarMovies.map((movie: any) => (
-            <div
-              key={movie.id}
-              className="group cursor-pointer"
-            >
-              <div className="overflow-hidden rounded-2xl">
-                <Image
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                  width={300}
-                  height={450}
-                  className="rounded-2xl transition duration-500 group-hover:scale-110"
-                />
-              </div>
-
-              <h3 className="mt-3 line-clamp-2 text-sm font-medium text-white">
-                {movie.title}
-              </h3>
-            </div>
-          ))}
+        <div className="flex gap-5 overflow-x-auto pb-4">
+          {similarMovies.map(
+            (movie: any) => (
+              <MovieCard
+                key={movie.id}
+                id={movie.id}
+                title={movie.title}
+                poster={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              />
+            )
+          )}
         </div>
       </section>
     </main>
