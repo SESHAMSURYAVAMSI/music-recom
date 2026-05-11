@@ -1,0 +1,124 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String            @id @default(cuid())
+
+  name            String
+  email           String            @unique
+  password        String
+
+  image           String?
+  bio             String?
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  watchlists      Watchlist[]
+  favorites       Favorite[]
+  recommendations Recommendation[]
+
+  @@index([email])
+
+  @@map("users")
+}
+
+model Movie {
+  id                Int              @id
+
+  title             String
+  overview          String?
+
+  posterPath        String?
+  backdropPath      String?
+
+  releaseDate       String?
+
+  voteAverage       Float?
+  popularity        Float?
+
+  genres            String
+
+  originalLanguage  String?
+
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  watchlists        Watchlist[]
+  favorites         Favorite[]
+  recommendations   Recommendation[]
+
+  @@index([title])
+  @@index([popularity])
+
+  @@map("movies")
+}
+
+model Watchlist {
+  id         String    @id @default(cuid())
+
+  userId     String
+  movieId    Int
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  movie      Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime  @default(now())
+
+  @@unique([userId, movieId])
+
+  @@index([userId])
+  @@index([movieId])
+
+  @@map("watchlists")
+}
+
+model Favorite {
+  id         String    @id @default(cuid())
+
+  userId     String
+  movieId    Int
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  movie      Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime  @default(now())
+
+  @@unique([userId, movieId])
+
+  @@index([userId])
+  @@index([movieId])
+
+  @@map("favorites")
+}
+
+model Recommendation {
+  id         String    @id @default(cuid())
+
+  userId     String
+  movieId    Int
+
+  score      Float?
+  reason     String?
+
+  createdAt  DateTime  @default(now())
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  movie      Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([movieId])
+
+  @@map("recommendations")
+}
