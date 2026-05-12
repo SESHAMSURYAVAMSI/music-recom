@@ -10,20 +10,21 @@ datasource db {
 }
 
 model User {
-  id              String            @id @default(cuid())
+  id            String    @id @default(cuid())
 
-  name            String
-  email           String            @unique
-  password        String
+  name          String
+  email         String    @unique
+  password      String
 
-  image           String?
-  bio             String?
+  image         String?
+  bio           String?
 
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  watchlists      Watchlist[]
-  favorites       Favorite[]
+  favorites     Favorite[]
+  watchlists    Watchlist[]
+  histories     WatchHistory[]
   recommendations Recommendation[]
 
   @@index([email])
@@ -32,47 +33,53 @@ model User {
 }
 
 model Movie {
-  id                Int              @id
+  id                 Int       @id
 
-  title             String
-  overview          String?
+  title              String
+  overview           String?
 
-  posterPath        String?
-  backdropPath      String?
+  posterPath         String?
+  backdropPath       String?
 
-  releaseDate       String?
+  trailerPath        String?
 
-  voteAverage       Float?
-  popularity        Float?
+  releaseDate        String?
 
-  genres            String
+  voteAverage        Float?
+  popularity         Float?
 
-  originalLanguage  String?
+  genres             String
 
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  runtime            Int?
 
-  watchlists        Watchlist[]
-  favorites         Favorite[]
-  recommendations   Recommendation[]
+  originalLanguage   String?
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  favorites          Favorite[]
+  watchlists         Watchlist[]
+  histories          WatchHistory[]
+  recommendations    Recommendation[]
 
   @@index([title])
   @@index([popularity])
+  @@index([voteAverage])
 
   @@map("movies")
 }
 
 model Watchlist {
-  id         String    @id @default(cuid())
+  id          String    @id @default(cuid())
 
-  userId     String
-  movieId    Int
+  userId      String
+  movieId     Int
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  movie      Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movie       Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
 
   @@unique([userId, movieId])
 
@@ -83,16 +90,16 @@ model Watchlist {
 }
 
 model Favorite {
-  id         String    @id @default(cuid())
+  id          String    @id @default(cuid())
 
-  userId     String
-  movieId    Int
+  userId      String
+  movieId     Int
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  movie      Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movie       Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
 
   @@unique([userId, movieId])
 
@@ -103,22 +110,44 @@ model Favorite {
 }
 
 model Recommendation {
-  id         String    @id @default(cuid())
+  id            String    @id @default(cuid())
 
-  userId     String
-  movieId    Int
+  userId        String
+  movieId       Int
 
-  score      Float?
-  reason     String?
+  score         Float?
+  reason        String?
 
-  createdAt  DateTime  @default(now())
+  createdAt     DateTime  @default(now())
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  movie      Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movie         Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([movieId])
 
   @@map("recommendations")
+}
+
+model WatchHistory {
+  id            String    @id @default(cuid())
+
+  userId        String
+  movieId       Int
+
+  watchedAt     DateTime  @default(now())
+
+  progress      Float?
+
+  completed     Boolean   @default(false)
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  movie         Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([movieId])
+
+  @@map("watch_history")
 }

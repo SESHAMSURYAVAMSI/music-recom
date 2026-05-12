@@ -1,16 +1,20 @@
 "use client";
 
-import { Bookmark } from "lucide-react";
-
-import { useMovieStore } from "@/store/movieStore";
+import { useState } from "react";
 
 import axios from "axios";
 
+import { Bookmark, Loader2 } from "lucide-react";
+
 import { toast } from "sonner";
+
+import { useMovieStore } from "@/store/movieStore";
 
 interface WatchlistButtonProps {
   movieId: number;
+
   title: string;
+
   posterPath: string;
 }
 
@@ -19,6 +23,9 @@ export default function WatchlistButton({
   title,
   posterPath,
 }: WatchlistButtonProps) {
+  const [loading, setLoading] =
+    useState(false);
+
   const watchlist =
     useMovieStore(
       (state) => state.watchlist
@@ -38,16 +45,25 @@ export default function WatchlistButton({
     watchlist.includes(movieId);
 
   const toggleWatchlist = async (
-    e: React.MouseEvent
+    e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
 
+    e.stopPropagation();
+
+    if (loading) return;
+
     try {
-      await axios.post("/api/watchlist", {
-  movieId,
-  title,
-  posterPath,
-});
+      setLoading(true);
+
+      await axios.post(
+        "/api/watchlist",
+        {
+          movieId,
+          title,
+          posterPath,
+        }
+      );
 
       if (isInWatchlist) {
         removeWatchlist(movieId);
@@ -62,24 +78,38 @@ export default function WatchlistButton({
           "Added to watchlist"
         );
       }
-    } catch {
-      toast.error("Please login first");
+    } catch (error) {
+      console.log(error);
+
+      toast.error(
+        "Please Login then Add to watchlist"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <button
       onClick={toggleWatchlist}
-      className="rounded-full bg-black/60 p-3 backdrop-blur-lg transition hover:scale-105"
+      disabled={loading}
+      className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 backdrop-blur-lg transition duration-300 hover:scale-110 hover:bg-black/80 disabled:opacity-50"
     >
-      <Bookmark
-        className={`transition ${
-          isInWatchlist
-            ? "fill-yellow-400 text-yellow-400"
-            : "text-white"
-        }`}
-        size={18}
-      />
+      {loading ? (
+        <Loader2
+          size={18}
+          className="animate-spin text-white"
+        />
+      ) : (
+        <Bookmark
+          size={18}
+          className={`transition duration-300 ${
+            isInWatchlist
+              ? "fill-yellow-400 text-yellow-400"
+              : "text-white"
+          }`}
+        />
+      )}
     </button>
   );
 }

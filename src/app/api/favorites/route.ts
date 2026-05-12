@@ -4,6 +4,57 @@ import { prisma } from "@/lib/db";
 
 import { getCurrentUser } from "@/lib/getUser";
 
+export async function GET() {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    const favorites =
+      await prisma.favorite.findMany({
+        where: {
+          userId: user.id,
+        },
+
+        include: {
+          movie: true,
+        },
+
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+    return NextResponse.json(
+      favorites
+    );
+  } catch (error) {
+    console.log(
+      "GET FAVORITES ERROR:",
+      error
+    );
+
+    return NextResponse.json(
+      {
+        message:
+          "Failed to fetch favorites",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
@@ -26,6 +77,22 @@ export async function POST(req: Request) {
       title,
       posterPath,
     } = body;
+
+    if (
+      !movieId ||
+      !title ||
+      !posterPath
+    ) {
+      return NextResponse.json(
+        {
+          message:
+            "Missing required fields",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
     let movie =
       await prisma.movie.findUnique({
@@ -57,6 +124,7 @@ export async function POST(req: Request) {
         },
       });
 
+    // REMOVE FAVORITE
     if (existingFavorite) {
       await prisma.favorite.delete({
         where: {
@@ -68,10 +136,14 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({
-        message: "Removed from favorites",
+        success: true,
+        action: "removed",
+        message:
+          "Removed from favorites",
       });
     }
 
+    // ADD FAVORITE
     await prisma.favorite.create({
       data: {
         userId: user.id,
@@ -80,14 +152,20 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
+      success: true,
+      action: "added",
       message: "Added to favorites",
     });
   } catch (error) {
-    console.log(error);
+    console.log(
+      "POST FAVORITES ERROR:",
+      error
+    );
 
     return NextResponse.json(
       {
-        message: "Internal server error",
+        message:
+          "Internal server error",
       },
       {
         status: 500,

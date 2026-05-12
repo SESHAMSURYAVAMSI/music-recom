@@ -37,9 +37,15 @@ export default function MovieCard({
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent opacity-0 transition group-hover:opacity-100" />
 
       <div className="absolute right-3 top-3 z-20 flex gap-2 opacity-0 transition group-hover:opacity-100">
-        <FavoriteButton movieId={id} />
+        <FavoriteButton
+  movieId={id}
+  title={title}
+  posterPath={poster}
+/>
 
-        <WatchlistButton movieId={id} />
+        <WatchlistButton movieId={id} 
+          title={title}
+  posterPath={poster}/>
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 z-20 p-4 opacity-0 transition group-hover:opacity-100">

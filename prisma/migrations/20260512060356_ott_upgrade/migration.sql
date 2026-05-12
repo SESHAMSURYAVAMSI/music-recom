@@ -17,10 +17,12 @@ CREATE TABLE "movies" (
     "overview" TEXT,
     "posterPath" TEXT,
     "backdropPath" TEXT,
+    "trailerPath" TEXT,
     "releaseDate" TEXT,
     "voteAverage" REAL,
     "popularity" REAL,
     "genres" TEXT NOT NULL,
+    "runtime" INTEGER,
     "originalLanguage" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
@@ -58,6 +60,18 @@ CREATE TABLE "recommendations" (
     CONSTRAINT "recommendations_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "movies" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "watch_history" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL,
+    "movieId" INTEGER NOT NULL,
+    "watchedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "progress" REAL,
+    "completed" BOOLEAN NOT NULL DEFAULT false,
+    CONSTRAINT "watch_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "watch_history_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "movies" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
@@ -69,6 +83,9 @@ CREATE INDEX "movies_title_idx" ON "movies"("title");
 
 -- CreateIndex
 CREATE INDEX "movies_popularity_idx" ON "movies"("popularity");
+
+-- CreateIndex
+CREATE INDEX "movies_voteAverage_idx" ON "movies"("voteAverage");
 
 -- CreateIndex
 CREATE INDEX "watchlists_userId_idx" ON "watchlists"("userId");
@@ -93,3 +110,9 @@ CREATE INDEX "recommendations_userId_idx" ON "recommendations"("userId");
 
 -- CreateIndex
 CREATE INDEX "recommendations_movieId_idx" ON "recommendations"("movieId");
+
+-- CreateIndex
+CREATE INDEX "watch_history_userId_idx" ON "watch_history"("userId");
+
+-- CreateIndex
+CREATE INDEX "watch_history_movieId_idx" ON "watch_history"("movieId");

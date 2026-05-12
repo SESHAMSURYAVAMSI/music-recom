@@ -4,7 +4,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
 
-import MovieCard from "./MovieCard";
+// import MovieCard from "./MovieCard";
+import HoverTrailerCard from "./HoverTrailerCard";
 
 interface Movie {
   id: number;
@@ -17,15 +18,10 @@ interface CinematicRowProps {
   movies: Movie[];
 }
 
-export default function CinematicRow({
-  title,
-  movies,
-}: CinematicRowProps) {
+export default function CinematicRow({ title, movies }: CinematicRowProps) {
   return (
     <section className="px-6 py-10">
-      <h2 className="mb-6 text-3xl font-bold text-white">
-        {title}
-      </h2>
+      <h2 className="mb-6 text-3xl font-bold text-white">{title}</h2>
 
       <Swiper
         spaceBetween={20}
@@ -41,7 +37,12 @@ export default function CinematicRow({
       >
         {movies.map((movie) => (
           <SwiperSlide key={movie.id}>
-            <MovieCard
+            {/* <MovieCard
+              id={movie.id}
+              title={movie.title}
+              poster={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            /> */}
+            <HoverTrailerCard
               id={movie.id}
               title={movie.title}
               poster={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}

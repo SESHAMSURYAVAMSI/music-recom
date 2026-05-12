@@ -21,7 +21,30 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const { movieId } = body;
+    const {
+      movieId,
+      title,
+      posterPath,
+    } = body;
+
+    let movie =
+      await prisma.movie.findUnique({
+        where: {
+          id: movieId,
+        },
+      });
+
+    if (!movie) {
+      movie =
+        await prisma.movie.create({
+          data: {
+            id: movieId,
+            title,
+            posterPath,
+            genres: "",
+          },
+        });
+    }
 
     const existing =
       await prisma.watchlist.findUnique({
@@ -29,7 +52,6 @@ export async function POST(req: Request) {
           userId_movieId: {
             userId: user.id,
             movieId,
-
           },
         },
       });
@@ -40,8 +62,6 @@ export async function POST(req: Request) {
           userId_movieId: {
             userId: user.id,
             movieId,
-
-            
           },
         },
       });
@@ -61,6 +81,49 @@ export async function POST(req: Request) {
     return NextResponse.json({
       message: "Added to watchlist",
     });
+  } catch (error) {
+    console.log(error);
+
+    return NextResponse.json(
+      {
+        message: "Internal server error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    const watchlist =
+      await prisma.watchlist.findMany({
+        where: {
+          userId: user.id,
+        },
+
+        include: {
+          movie: true,
+        },
+      });
+
+    return NextResponse.json(
+      watchlist
+    );
   } catch (error) {
     console.log(error);
 
