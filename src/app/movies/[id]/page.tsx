@@ -107,12 +107,16 @@ export default async function MoviePage({
 
             {/* Favorite */}
             <FavoriteButton
-              movieId={movie.id}
-            />
+  movieId={movie.id}
+  title={movie.title}
+  posterPath={movie.poster_path}
+/>
 
             {/* Watchlist */}
             <WatchlistButton
               movieId={movie.id}
+              title={movie.title}
+  posterPath={movie.poster_path}
             />
           </div>
         </div>
