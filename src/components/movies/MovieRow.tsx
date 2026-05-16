@@ -11,16 +11,11 @@ interface MovieRowProps {
   movies: Movie[];
 }
 
-export default function MovieRow({
-  title,
-  movies,
-}: MovieRowProps) {
+export default function MovieRow({ title, movies }: MovieRowProps) {
   return (
     <section className="px-6 py-10">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">
-          {title}
-        </h2>
+        <h2 className="text-2xl font-bold text-white">{title}</h2>
 
         <button className="text-sm text-zinc-400 transition hover:text-white">
           View All

@@ -14,39 +14,28 @@ interface MovieStore {
   removeWatchlist: (id: number) => void;
 }
 
-export const useMovieStore =
-  create<MovieStore>((set) => ({
-    favorites: [],
+export const useMovieStore = create<MovieStore>((set) => ({
+  favorites: [],
 
-    watchlist: [],
+  watchlist: [],
 
-    addFavorite: (id) =>
-      set((state) => ({
-        favorites: [
-          ...state.favorites,
-          id,
-        ],
-      })),
+  addFavorite: (id) =>
+    set((state) => ({
+      favorites: [...state.favorites, id],
+    })),
 
-    removeFavorite: (id) =>
-      set((state) => ({
-        favorites: state.favorites.filter(
-          (movieId) => movieId !== id
-        ),
-      })),
+  removeFavorite: (id) =>
+    set((state) => ({
+      favorites: state.favorites.filter((movieId) => movieId !== id),
+    })),
 
-    addWatchlist: (id) =>
-      set((state) => ({
-        watchlist: [
-          ...state.watchlist,
-          id,
-        ],
-      })),
+  addWatchlist: (id) =>
+    set((state) => ({
+      watchlist: [...state.watchlist, id],
+    })),
 
-    removeWatchlist: (id) =>
-      set((state) => ({
-        watchlist: state.watchlist.filter(
-          (movieId) => movieId !== id
-        ),
-      })),
-  }));
+  removeWatchlist: (id) =>
+    set((state) => ({
+      watchlist: state.watchlist.filter((movieId) => movieId !== id),
+    })),
+}));

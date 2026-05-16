@@ -1,5 +1,5 @@
 // prisma/schema.prisma
-
+# DATABASE_URL="file:./dev.db"
 generator client {
   provider = "prisma-client-js"
 }

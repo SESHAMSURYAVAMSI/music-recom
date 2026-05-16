@@ -2,14 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-const moods = [
-  "happy",
-  "sad",
-  "excited",
-  "scared",
-  "romantic",
-  "thoughtful",
-];
+const moods = ["happy", "sad", "excited", "scared", "romantic", "thoughtful"];
 
 export default function MoodSelector() {
   const router = useRouter();
@@ -19,11 +12,7 @@ export default function MoodSelector() {
       {moods.map((mood) => (
         <button
           key={mood}
-          onClick={() =>
-            router.push(
-              `/recommendations?mood=${mood}`
-            )
-          }
+          onClick={() => router.push(`/recommendations?mood=${mood}`)}
           className="rounded-full bg-white/10 px-6 py-3 capitalize text-white transition hover:bg-white hover:text-black"
         >
           {mood}

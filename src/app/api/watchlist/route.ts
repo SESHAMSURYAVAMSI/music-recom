@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-
 import { prisma } from "@/lib/db";
-
 import { getCurrentUser } from "@/lib/getUser";
 
 export async function POST(req: Request) {
@@ -15,46 +13,39 @@ export async function POST(req: Request) {
         },
         {
           status: 401,
-        }
+        },
       );
     }
 
     const body = await req.json();
 
-    const {
-      movieId,
-      title,
-      posterPath,
-    } = body;
+    const { movieId, title, posterPath } = body;
 
-    let movie =
-      await prisma.movie.findUnique({
-        where: {
-          id: movieId,
-        },
-      });
+    let movie = await prisma.movie.findUnique({
+      where: {
+        id: movieId,
+      },
+    });
 
     if (!movie) {
-      movie =
-        await prisma.movie.create({
-          data: {
-            id: movieId,
-            title,
-            posterPath,
-            genres: "",
-          },
-        });
-    }
-
-    const existing =
-      await prisma.watchlist.findUnique({
-        where: {
-          userId_movieId: {
-            userId: user.id,
-            movieId,
-          },
+      movie = await prisma.movie.create({
+        data: {
+          id: movieId,
+          title,
+          posterPath,
+          genres: "",
         },
       });
+    }
+
+    const existing = await prisma.watchlist.findUnique({
+      where: {
+        userId_movieId: {
+          userId: user.id,
+          movieId,
+        },
+      },
+    });
 
     if (existing) {
       await prisma.watchlist.delete({
@@ -90,7 +81,7 @@ export async function POST(req: Request) {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }
@@ -106,24 +97,21 @@ export async function GET() {
         },
         {
           status: 401,
-        }
+        },
       );
     }
 
-    const watchlist =
-      await prisma.watchlist.findMany({
-        where: {
-          userId: user.id,
-        },
+    const watchlist = await prisma.watchlist.findMany({
+      where: {
+        userId: user.id,
+      },
 
-        include: {
-          movie: true,
-        },
-      });
+      include: {
+        movie: true,
+      },
+    });
 
-    return NextResponse.json(
-      watchlist
-    );
+    return NextResponse.json(watchlist);
   } catch (error) {
     console.log(error);
 
@@ -133,7 +121,7 @@ export async function GET() {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

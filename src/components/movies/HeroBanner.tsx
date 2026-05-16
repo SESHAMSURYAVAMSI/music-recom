@@ -1,50 +1,47 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import HeroTrailer from "./HeroTrailer";
-
 import { useMovieStore } from "@/store/movieStore";
 
-interface HeroBannerProps {
+interface Movie {
   id: number;
-
   title: string;
-
   overview: string;
-
-  image: string;
+  backdrop_path: string;
 }
 
-export default function HeroBanner({
-  id,
-  title,
-  overview,
-  image,
-}: HeroBannerProps) {
-  const router = useRouter();
+interface HeroBannerProps {
+  movies: Movie[];
+}
 
-  const addWatchlist =
-    useMovieStore(
-      (state) => state.addWatchlist
-    );
+export default function HeroBanner({ movies }: HeroBannerProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleWatchNow = () => {
-    router.push(`/movies/${id}`);
-  };
+  const addWatchlist = useMovieStore((state) => state.addWatchlist);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev === movies.length - 1 ? 0 : prev + 1));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [movies.length]);
+
+  const currentMovie = movies[currentIndex];
+
+  const image = `https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`;
 
   const handleMyList = () => {
-    addWatchlist(id);
+    addWatchlist(currentMovie.id);
 
-    toast.success(
-      "Added to watchlist"
-    );
+    toast.success("Added to watchlist");
   };
 
   return (
     <section
-      className="relative flex h-screen items-end overflow-hidden bg-cover bg-center"
+      className="relative flex h-screen items-end overflow-hidden bg-cover bg-center transition-all duration-1000"
       style={{
         backgroundImage: `url(${image})`,
       }}
@@ -58,22 +55,16 @@ export default function HeroBanner({
           Featured Movie
         </span>
 
-        <h1 className="mt-6 text-7xl font-black leading-tight text-white">
-          {title}
+        <h1 className="mt-6 text-7xl font-black leading-tight text-white transition-all duration-500">
+          {currentMovie.title}
         </h1>
 
         <p className="mt-6 line-clamp-4 text-lg leading-relaxed text-zinc-300">
-          {overview}
+          {currentMovie.overview}
         </p>
 
         <div className="mt-8 flex gap-5">
-          {/* <button
-            onClick={handleWatchNow}
-            className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105"
-          >
-            ▶ Watch Now
-          </button> */}
-          <HeroTrailer movieId={id} />
+          <HeroTrailer movieId={currentMovie.id} />
 
           <button
             onClick={handleMyList}
@@ -81,6 +72,19 @@ export default function HeroBanner({
           >
             + My List
           </button>
+        </div>
+
+        {/* Slider Indicators */}
+        <div className="mt-10 flex gap-3">
+          {movies.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`h-2 rounded-full transition-all ${
+                currentIndex === index ? "w-10 bg-white" : "w-4 bg-white/40"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>

@@ -1,22 +1,16 @@
 "use client";
 
 import { useState } from "react";
-
 import axios from "axios";
-
 import { Bot, Loader2, Send } from "lucide-react";
-
 import { motion } from "framer-motion";
 
 export default function AIMovieAssistant() {
-  const [prompt, setPrompt] =
-    useState("");
+  const [prompt, setPrompt] = useState("");
 
-  const [response, setResponse] =
-    useState("");
+  const [response, setResponse] = useState("");
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleAskAI = async () => {
     if (!prompt.trim()) return;
@@ -26,18 +20,13 @@ export default function AIMovieAssistant() {
 
       setResponse("");
 
-      const res = await axios.post(
-        "/api/ai/recommend",
-        {
-          prompt,
-        }
-      );
+      const res = await axios.post("/api/ai/recommend", {
+        prompt,
+      });
 
       setResponse(res.data.response);
     } catch {
-      setResponse(
-        "Something went wrong."
-      );
+      setResponse("Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -67,9 +56,7 @@ export default function AIMovieAssistant() {
             type="text"
             placeholder="Suggest emotional sci-fi movies..."
             value={prompt}
-            onChange={(e) =>
-              setPrompt(e.target.value)
-            }
+            onChange={(e) => setPrompt(e.target.value)}
             className="flex-1 rounded-2xl border border-white/10 bg-black/40 px-5 py-4 text-white outline-none"
           />
 
@@ -78,11 +65,7 @@ export default function AIMovieAssistant() {
             disabled={loading}
             className="rounded-2xl bg-white px-6 text-black transition hover:scale-105"
           >
-            {loading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <Send />
-            )}
+            {loading ? <Loader2 className="animate-spin" /> : <Send />}
           </button>
         </div>
 

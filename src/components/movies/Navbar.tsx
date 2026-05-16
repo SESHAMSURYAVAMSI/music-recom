@@ -1,19 +1,10 @@
 "use client";
 
 import Link from "next/link";
-
 import { useRouter } from "next/navigation";
-
 import axios from "axios";
-
 import { toast } from "sonner";
-
-import {
-  Heart,
-  Bookmark,
-  LogOut,
-} from "lucide-react";
-
+import { Heart, Bookmark, LogOut } from "lucide-react";
 import SearchBar from "./SearchBar";
 
 export default function Navbar() {
@@ -21,13 +12,9 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "/api/auth/logout"
-      );
+      await axios.post("/api/auth/logout");
 
-      toast.success(
-        "Logged out successfully"
-      );
+      toast.success("Logged out successfully");
 
       router.push("/login");
 
@@ -35,19 +22,14 @@ export default function Navbar() {
     } catch (error) {
       console.log(error);
 
-      toast.error(
-        "Logout failed"
-      );
+      toast.error("Logout failed");
     }
   };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
-        <Link
-          href="/dashboard"
-          className="text-3xl font-bold text-white"
-        >
+        <Link href="/dashboard" className="text-3xl font-bold text-white">
           CineVerse
         </Link>
 

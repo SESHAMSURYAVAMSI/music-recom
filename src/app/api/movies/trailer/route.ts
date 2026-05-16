@@ -1,59 +1,38 @@
-import {
-  NextRequest,
-  NextResponse,
-} from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { tmdb } from "@/lib/tmdb";
 
-export async function GET(
-  req: NextRequest
-) {
+export async function GET(req: NextRequest) {
   try {
-    const movieId =
-      req.nextUrl.searchParams.get(
-        "movieId"
-      );
+    const movieId = req.nextUrl.searchParams.get("movieId");
 
     if (!movieId) {
       return NextResponse.json(
         {
-          message:
-            "Movie ID required",
+          message: "Movie ID required",
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
-    const response = await tmdb.get(
-      `/movie/${movieId}/videos`
-    );
+    const response = await tmdb.get(`/movie/${movieId}/videos`);
 
-    const videos =
-      response.data.results;
+    const videos = response.data.results;
 
     // PRIORITY ORDER
     const preferredVideo =
       videos.find(
-        (video: any) =>
-          video.site === "YouTube" &&
-          video.type === "Trailer"
+        (video: any) => video.site === "YouTube" && video.type === "Trailer",
       ) ||
       videos.find(
-        (video: any) =>
-          video.site === "YouTube" &&
-          video.type === "Teaser"
+        (video: any) => video.site === "YouTube" && video.type === "Teaser",
       ) ||
       videos.find(
-        (video: any) =>
-          video.site === "YouTube" &&
-          video.type === "Clip"
+        (video: any) => video.site === "YouTube" && video.type === "Clip",
       ) ||
-      videos.find(
-        (video: any) =>
-          video.site === "YouTube"
-      );
+      videos.find((video: any) => video.site === "YouTube");
 
     if (!preferredVideo) {
       return NextResponse.json({
@@ -69,12 +48,11 @@ export async function GET(
 
     return NextResponse.json(
       {
-        message:
-          "Failed to fetch trailer",
+        message: "Failed to fetch trailer",
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

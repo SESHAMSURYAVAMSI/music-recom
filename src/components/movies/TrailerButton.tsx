@@ -1,49 +1,36 @@
 "use client";
 
 import { useState } from "react";
-
 import TrailerModal from "./TrailerModal";
 import { toast } from "sonner";
 interface TrailerButtonProps {
   movieId: number;
 }
 
-export default function TrailerButton({
-  movieId,
-}: TrailerButtonProps) {
-  const [open, setOpen] =
-    useState(false);
+export default function TrailerButton({ movieId }: TrailerButtonProps) {
+  const [open, setOpen] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [videoKey, setVideoKey] =
-    useState("");
+  const [videoKey, setVideoKey] = useState("");
 
-  const fetchTrailer = async (
-    e: React.MouseEvent
-  ) => {
+  const fetchTrailer = async (e: React.MouseEvent) => {
     e.preventDefault();
 
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `/api/movies/trailer?movieId=${movieId}`
-      );
+      const response = await fetch(`/api/movies/trailer?movieId=${movieId}`);
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (data.videoKey) {
         setVideoKey(data.videoKey);
 
         setOpen(true);
-      }else {
-  toast.error(
-    "Trailer not available"
-  );
-}
+      } else {
+        toast.error("Trailer not available");
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -61,11 +48,7 @@ export default function TrailerButton({
         ▶
       </button>
 
-      <TrailerModal
-        open={open}
-        onOpenChange={setOpen}
-        videoKey={videoKey}
-      />
+      <TrailerModal open={open} onOpenChange={setOpen} videoKey={videoKey} />
     </>
   );
 }

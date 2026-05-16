@@ -1,7 +1,5 @@
 import { prisma } from "@/lib/db";
-
 import bcrypt from "bcryptjs";
-
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -17,16 +15,15 @@ export async function POST(req: Request) {
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
-    const existingUser =
-      await prisma.user.findUnique({
-        where: {
-          email,
-        },
-      });
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
     if (existingUser) {
       return NextResponse.json(
@@ -35,12 +32,11 @@ export async function POST(req: Request) {
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.create({
       data: {
@@ -53,18 +49,16 @@ export async function POST(req: Request) {
     return NextResponse.json({
       message: "Account created successfully",
     });
-} catch (error: any) {
-  console.log("SIGNUP ERROR:", error);
+  } catch (error: any) {
+    console.log("SIGNUP ERROR:", error);
 
-  return NextResponse.json(
-    {
-      message:
-        error.message ||
-        "Internal server error",
-    },
-    {
-      status: 500,
-    }
-  );
-}
+    return NextResponse.json(
+      {
+        message: error.message || "Internal server error",
+      },
+      {
+        status: 500,
+      },
+    );
+  }
 }

@@ -1,13 +1,9 @@
 "use client";
 
 import { useState } from "react";
-
 import axios from "axios";
-
 import { Heart, Loader2 } from "lucide-react";
-
 import { toast } from "sonner";
-
 import { useMovieStore } from "@/store/movieStore";
 
 interface FavoriteButtonProps {
@@ -16,37 +12,27 @@ interface FavoriteButtonProps {
   title: string;
 
   posterPath: string;
+
+  onRemove?: (movieId: number) => void;
 }
 
 export default function FavoriteButton({
   movieId,
   title,
   posterPath,
+  onRemove,
 }: FavoriteButtonProps) {
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const favorites =
-    useMovieStore(
-      (state) => state.favorites
-    );
+  const favorites = useMovieStore((state) => state.favorites);
 
-  const addFavorite =
-    useMovieStore(
-      (state) => state.addFavorite
-    );
+  const addFavorite = useMovieStore((state) => state.addFavorite);
 
-  const removeFavorite =
-    useMovieStore(
-      (state) => state.removeFavorite
-    );
+  const removeFavorite = useMovieStore((state) => state.removeFavorite);
 
-  const isFavorite =
-    favorites.includes(movieId);
+  const isFavorite = favorites.includes(movieId);
 
-  const toggleFavorite = async (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const toggleFavorite = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     e.stopPropagation();
@@ -56,34 +42,41 @@ export default function FavoriteButton({
     try {
       setLoading(true);
 
-      await axios.post(
-        "/api/favorites",
-        {
-          movieId,
-          title,
-          posterPath,
-        }
-      );
+      const response = await axios.post("/api/favorites", {
+        movieId,
+        title,
+        posterPath,
+      });
 
-      if (isFavorite) {
+      const message = response.data.message;
+
+      // REMOVE
+      if (message === "Removed from favorites") {
         removeFavorite(movieId);
 
-        toast.success(
-          "Removed from favorites"
-        );
-      } else {
+        onRemove?.(movieId);
+
+        toast.success("Removed successfully");
+      }
+
+      // ADD
+      else if (message === "Added to favorites") {
         addFavorite(movieId);
 
-        toast.success(
-          "Added to favorites"
-        );
+        toast.success("Added to favorites");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
 
-      toast.error(
-        "Please Login First then Add to Favorite"
-      );
+      // UNAUTHORIZED
+      if (error?.response?.status === 401) {
+        toast.error("Please login first");
+      }
+
+      // OTHER ERRORS
+      else {
+        toast.error("Failed to update favorites");
+      }
     } finally {
       setLoading(false);
     }
@@ -93,20 +86,15 @@ export default function FavoriteButton({
     <button
       onClick={toggleFavorite}
       disabled={loading}
-      className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 backdrop-blur-lg transition duration-300 hover:scale-110 hover:bg-black/80 disabled:opacity-50"
+      className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 backdrop-blur-lg transition duration-300 hover:scale-110 hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {loading ? (
-        <Loader2
-          size={18}
-          className="animate-spin text-white"
-        />
+        <Loader2 size={18} className="animate-spin text-white" />
       ) : (
         <Heart
           size={18}
           className={`transition duration-300 ${
-            isFavorite
-              ? "fill-red-500 text-red-500"
-              : "text-white"
+            isFavorite ? "fill-red-500 text-red-500" : "text-white"
           }`}
         />
       )}

@@ -1,10 +1,8 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
-
-// import MovieCard from "./MovieCard";
+//import MovieCard from "./MovieCard";
 import HoverTrailerCard from "./HoverTrailerCard";
 
 interface Movie {

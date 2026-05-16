@@ -1,9 +1,6 @@
 import MovieRow from "@/components/movies/MovieRow";
-
 import MoodSelector from "@/components/movies/MoodSelector";
-
 import { tmdb } from "@/lib/tmdb";
-
 import { getMoodGenres } from "@/lib/aiRecommendations";
 
 interface RecommendationPageProps {
@@ -12,17 +9,12 @@ interface RecommendationPageProps {
   }>;
 }
 
-async function getMoviesByGenre(
-  genreId: number
-) {
-  const response = await tmdb.get(
-    "/discover/movie",
-    {
-      params: {
-        with_genres: genreId,
-      },
-    }
-  );
+async function getMoviesByGenre(genreId: number) {
+  const response = await tmdb.get("/discover/movie", {
+    params: {
+      with_genres: genreId,
+    },
+  });
 
   return response.data.results;
 }
@@ -39,12 +31,9 @@ export default async function RecommendationPage({
   let movies: any[] = [];
 
   if (genres.length > 0) {
-    const results =
-      await Promise.all(
-        genres.map((genreId) =>
-          getMoviesByGenre(genreId)
-        )
-      );
+    const results = await Promise.all(
+      genres.map((genreId) => getMoviesByGenre(genreId)),
+    );
 
     movies = results.flat();
   }
@@ -59,10 +48,7 @@ export default async function RecommendationPage({
 
       {mood ? (
         <div className="mt-10">
-          <MovieRow
-            title={`Because you're feeling ${mood}`}
-            movies={movies}
-          />
+          <MovieRow title={`Because you're feeling ${mood}`} movies={movies} />
         </div>
       ) : (
         <div className="mt-10 text-zinc-400">

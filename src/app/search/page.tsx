@@ -1,7 +1,5 @@
 import MovieRow from "@/components/movies/MovieRow";
-
 import SearchBar from "@/components/movies/SearchBar";
-
 import { tmdb } from "@/lib/tmdb";
 
 interface SearchPageProps {
@@ -11,28 +9,21 @@ interface SearchPageProps {
 }
 
 async function searchMovies(query: string) {
-  const response = await tmdb.get(
-    "/search/movie",
-    {
-      params: {
-        query,
-      },
-    }
-  );
+  const response = await tmdb.get("/search/movie", {
+    params: {
+      query,
+    },
+  });
 
   return response.data.results;
 }
 
-export default async function SearchPage({
-  searchParams,
-}: SearchPageProps) {
+export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
 
   const query = params.query || "";
 
-  const movies = query
-    ? await searchMovies(query)
-    : [];
+  const movies = query ? await searchMovies(query) : [];
 
   return (
     <main className="min-h-screen bg-black p-6">
@@ -41,14 +32,9 @@ export default async function SearchPage({
       </div>
 
       {query ? (
-        <MovieRow
-          title={`Results for "${query}"`}
-          movies={movies}
-        />
+        <MovieRow title={`Results for "${query}"`} movies={movies} />
       ) : (
-        <p className="text-zinc-400">
-          Search for movies
-        </p>
+        <p className="text-zinc-400">Search for movies</p>
       )}
     </main>
   );

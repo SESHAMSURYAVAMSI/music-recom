@@ -5,21 +5,15 @@ interface Movie {
   popularity: number;
 }
 
-export function recommendMovies(
-  movies: Movie[],
-  preferredGenres: number[]
-) {
+export function recommendMovies(movies: Movie[], preferredGenres: number[]) {
   return movies
     .map((movie) => {
-      const genreMatch =
-        movie.genre_ids.filter((id) =>
-          preferredGenres.includes(id)
-        ).length;
+      const genreMatch = movie.genre_ids.filter((id) =>
+        preferredGenres.includes(id),
+      ).length;
 
       const score =
-        genreMatch * 5 +
-        movie.vote_average * 2 +
-        movie.popularity * 0.01;
+        genreMatch * 5 + movie.vote_average * 2 + movie.popularity * 0.01;
 
       return {
         ...movie,

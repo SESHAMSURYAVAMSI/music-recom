@@ -1,22 +1,16 @@
 "use client";
 
 import { useState } from "react";
-
 import { useRouter } from "next/navigation";
-
 import { Search } from "lucide-react";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
-
   const router = useRouter();
-
   const handleSearch = () => {
     if (!query.trim()) return;
 
-    router.push(
-      `/search?query=${encodeURIComponent(query)}`
-    );
+    router.push(`/search?query=${encodeURIComponent(query)}`);
   };
 
   return (
@@ -27,12 +21,8 @@ export default function SearchBar() {
         type="text"
         placeholder="Search movies..."
         value={query}
-        onChange={(e) =>
-          setQuery(e.target.value)
-        }
-        onKeyDown={(e) =>
-          e.key === "Enter" && handleSearch()
-        }
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         className="ml-3 w-full bg-transparent text-white outline-none"
       />
     </div>

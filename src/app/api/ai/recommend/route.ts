@@ -6,10 +6,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const fallbackRecommendations: Record<
-  string,
-  string
-> = {
+const fallbackRecommendations: Record<string, string> = {
   drama: `
 🎭 Drama Recommendations
 
@@ -60,75 +57,59 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const prompt =
-      body.prompt?.toLowerCase() || "";
+    const prompt = body.prompt?.toLowerCase() || "";
 
     try {
-      const completion =
-        await openai.chat.completions.create({
-          model: "gpt-3.5-turbo",
+      const completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
 
-          messages: [
-            {
-              role: "system",
+        messages: [
+          {
+            role: "system",
 
-              content: `
+            content: `
 You are an expert AI movie recommendation assistant.
 Recommend movies based on user moods and genres.
               `,
-            },
+          },
 
-            {
-              role: "user",
+          {
+            role: "user",
 
-              content: prompt,
-            },
-          ],
+            content: prompt,
+          },
+        ],
 
-          temperature: 0.8,
-        });
+        temperature: 0.8,
+      });
 
       return NextResponse.json({
-        response:
-          completion.choices[0].message.content,
+        response: completion.choices[0].message.content,
       });
     } catch (openAIError) {
-      console.log(
-        "OpenAI failed. Using fallback AI."
-      );
+      console.log("OpenAI failed. Using fallback AI.");
 
       if (prompt.includes("drama")) {
         return NextResponse.json({
-          response:
-            fallbackRecommendations.drama,
+          response: fallbackRecommendations.drama,
         });
       }
 
-      if (
-        prompt.includes("sci") ||
-        prompt.includes("space")
-      ) {
+      if (prompt.includes("sci") || prompt.includes("space")) {
         return NextResponse.json({
-          response:
-            fallbackRecommendations.sciFi,
+          response: fallbackRecommendations.sciFi,
         });
       }
 
-      if (
-        prompt.includes("horror")
-      ) {
+      if (prompt.includes("horror")) {
         return NextResponse.json({
-          response:
-            fallbackRecommendations.horror,
+          response: fallbackRecommendations.horror,
         });
       }
 
-      if (
-        prompt.includes("comedy")
-      ) {
+      if (prompt.includes("comedy")) {
         return NextResponse.json({
-          response:
-            fallbackRecommendations.comedy,
+          response: fallbackRecommendations.comedy,
         });
       }
 
@@ -153,7 +134,7 @@ Recommend movies based on user moods and genres.
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }
