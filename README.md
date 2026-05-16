@@ -67,14 +67,7 @@ A modern AI-powered OTT Movie Recommendation Platform inspired by Netflix, Prime
 - Manage collections
 - Dynamic movie pages
 
----
-
-# ⚙️ Installation
-
-## Clone Repository
-
-```bash
-git clone https://github.com/your-username/cineverse-ai-movie-recommendation-system.git
+----
 
 ---
 ## 👨‍💻 Developer
@@ -83,3 +76,12 @@ Crafted with care by **Suryavamsi** ✨
 Frontend Developer | Full Stack Developer.
 
 ---
+
+
+# ⚙️ Installation
+
+## Clone Repository
+
+```bash
+git clone https://github.com/your-username/cineverse-ai-movie-recommendation-system.git
+
